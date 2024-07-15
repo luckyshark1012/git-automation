@@ -1,4 +1,6 @@
 const { exec } = require('child_process');
+const path = require('path');
+const fs = require('fs');
 
 // Retrieve command-line arguments
 const args = process.argv.slice(2);
@@ -14,6 +16,7 @@ const authorName = 'luckyshark1012';
 const authorEmail = 'luckyshark1012@gmail.com';
 const projectName = sourceRepo.split('/').pop().replace('.git', '');
 
+// Function to run shell commands
 const runCommand = (command, successMessage, failureMessage) => {
   return new Promise((resolve, reject) => {
     exec(command, (error, stdout, stderr) => {
@@ -30,7 +33,15 @@ const runCommand = (command, successMessage, failureMessage) => {
 
 const cloneRepo = async () => {
   try {
+    // Move up one directory level
+    const upOneLevel = path.resolve('..');
+    process.chdir(upOneLevel);
+    console.log(`Moved up to ${upOneLevel}`);
+
+    // Clone the repository
     await runCommand(`git clone ${sourceRepo}`, 'Step 1: Repository cloned successfully', 'Step 1: Failed to clone repository');
+    
+    // Change directory to the cloned project
     process.chdir(projectName);
     console.log(`Step 2: Changed directory to ${projectName}`);
   } catch (error) {
